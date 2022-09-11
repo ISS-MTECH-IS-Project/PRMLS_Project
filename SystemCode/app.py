@@ -8,7 +8,7 @@ from datetime import datetime
 app = Flask(__name__)
 cors = CORS(app)
 
-UPLOAD_FOLDER = "./static/Images"
+UPLOAD_FOLDER = "./static/images"
 
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
