@@ -8,43 +8,22 @@ import Paper from "@mui/material/Paper";
 import Divider from "@mui/material/Divider";
 import moment from "moment";
 
-// message : {body}
 const ChatScreen = () => {
   const [messages, setMessages] = useState([]);
 
-  // get next message
-  const getNext = async (message) => {
-    var mIndex = messages.length - 1;
-    for (var i = messages.length - 1; i > 0; i--) {
-      if (
-        messages[i].symptoms !== undefined &&
-        messages[i].symptoms.length > 0
-      ) {
-        mIndex = i;
-        break;
-      }
-    }
-    const m = messages[mIndex];
-    const tempBody = m.body;
-    m.body = message.body;
+  const uploadImg = async (file, preview) => {
+    const reqBody = new FormData();
+    reqBody.append("image", file, file.name);
     const res = await fetch(`http://localhost:5000/api/classify`, {
       method: "POST",
-      headers: {
-        "Content-type": "application/json",
-      },
-      body: JSON.stringify(m),
+      body: reqBody,
     });
     const data = await res.json();
-    m.body = tempBody;
-    data.time = moment().format("hh:mm");
-    setMessages([...messages, message, data]);
+    setMessages([
+      ...messages,
+      { file: file, preview: preview, response: data },
+    ]);
     scrollToBottom();
-  };
-
-  const sendMessage = (message) => {
-    message.time = moment().format("hh:mm");
-    setMessages([...messages, message]);
-    getNext(message);
   };
 
   const messagesEndRef = useRef(null);
@@ -67,7 +46,7 @@ const ChatScreen = () => {
             <Topbar />
             <Messages messages={messages} />
             <Divider sx={{ mt: 2 }} />
-            <Footer onSend={sendMessage} />
+            <Footer onSend={uploadImg} />
             <div ref={messagesEndRef} />
           </Grid>
         </Paper>
