@@ -1,3 +1,4 @@
+from urllib import response
 from flask import Flask, jsonify, request
 from flask import render_template
 import os
@@ -8,7 +9,7 @@ app = Flask(__name__)
 cors = CORS(app)
 
 UPLOAD_FOLDER = "./static/Images"
-types = ["arowana", "betta", "goldfish", "luohan", "idk"]
+
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
 
@@ -29,5 +30,5 @@ def uploadFile(file1):
 def classifyImage():
     image = request.files["image"]
     filename = uploadFile(image)
-    type = types[Classifier().classify(filename)]
-    return jsonify("{type:"+type+"}")
+    resp = Classifier().classify(filename)
+    return jsonify(resp)

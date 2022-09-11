@@ -9,10 +9,16 @@ class SingletonMeta(type):
         return cls._instances[cls]
 
 
+types = ["arowana", "betta", "goldfish", "luohan", "idk"]
+
+
 class Classifier(metaclass=SingletonMeta):
     def __init__(self):
         self.generalModel = None
 
     def classify(self, img):
 
-        return 0
+        res = {}
+        res["type"] = types[0]
+        res["probability"] = 0.8
+        return res

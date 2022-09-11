@@ -1,5 +1,5 @@
 import { BiBot } from "react-icons/bi";
-import { Box, Card, CardContent, Grid } from "@mui/material";
+import { Box, Grid } from "@mui/material";
 import Paper from "@mui/material/Paper";
 
 const Message = ({ message }) => {
@@ -8,22 +8,14 @@ const Message = ({ message }) => {
       <Grid container direction="column" alignContent="flex-start">
         <Grid item alignItems="flex">
           <BiBot />
-          <span> ChatBot</span>
-          <span> @ {message.time}</span>
-          {message.hasOwnProperty("symptoms") && message.symptoms.length === 0 && (
-            <Card>
-              <CardContent>
-                Dear user, I apologise for not understanding your response.
-                <br />
-                Please try to describe your pet fish's symptoms more.
-              </CardContent>
-            </Card>
-          )}
+          <span>{message.file.name}</span>
         </Grid>
         <Grid item display="inline-flex">
-          <Paper elevation={1}>
-            <Box m={1}>
-              <span>{message.body}</span>
+          <Paper>
+            <Box>
+              <img width={400} src={message.preview}></img>
+              <p>Type: {message.response.type}</p>
+              <p>Probability: {message.response.probability}</p>
             </Box>
           </Paper>
         </Grid>
