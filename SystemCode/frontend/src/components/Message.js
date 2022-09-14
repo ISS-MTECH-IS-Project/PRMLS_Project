@@ -14,8 +14,11 @@ const Message = ({ message }) => {
           <Paper>
             <Box>
               <img width={400} src={message.preview}></img>
-              <p>Type: {message.response.type}</p>
-              <p>Probability: {message.response.probability}</p>
+              {message.response.result.map((m) => (
+                <p>
+                  Type: {m.type} - {m.probability.toFixed(6)}%
+                </p>
+              ))}
             </Box>
           </Paper>
         </Grid>
