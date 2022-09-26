@@ -43,7 +43,7 @@ binaryModels = [
     },
     {
         "fishType": "betta",
-        "filePath": "./models/betta_softmax_128_50_64_1_2022-09-25_22-23-48.hdf5",
+        "filePath": "./models/betta_softmax_128_50_64_1_2022-09-26_17-51-39.hdf5",
         "activation": "softmax",
         "loss": 'categorical_crossentropy',
         "optmz": 1
