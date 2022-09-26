@@ -351,39 +351,41 @@ class Classifier(metaclass=SingletonMeta):
         preRes = self.preModel.predict(process_image(img_file, 32, 32))
         print(preRes[0])
         if (preRes[0][1] != max(preRes[0])):
-            resArray = [{"type": "IDK", "probability": 100*preRes[0][1]}]
+            resArray = [{"type": "I cannot tell if it is a fish.",
+                         "probability": 100*preRes[0][1]}]
             res = {"result": resArray}
             return res
 
         resized_img = process_image(img_file, IMGSIZE, IMGSIZE)
-        result = self.modelGo.predict(resized_img)
-        print(result)
-        resArray = [{"type": types[i], "probability": p*100}
-                    for (i, p) in enumerate(result[0])]
+        resArray = []
 
-        print("Compare prediction-------------------------")
-        for i in range(len(sampleFiles)):
-            sample_img = cv2.imread(str(UPLOAD_FOLDER+sampleFiles[i]))
-            sample_img = cv2.resize(sample_img, (IMGSIZE, IMGSIZE))
-            sample_img = np.array([sample_img])
-            sample_img = sample_img / 255
-            result = self.modelDualGo.predict([resized_img, sample_img])
-            print(sampleFiles[i], " ------- ", result)
+        # result = self.modelGo.predict(resized_img)
+        # print(result)
+        # resArray = [{"type": types[i], "probability": p*100}
+        #             for (i, p) in enumerate(result[0])]
+
+        # print("Compare prediction-------------------------")
+        # for i in range(len(sampleFiles)):
+        #     sample_img = cv2.imread(str(UPLOAD_FOLDER+sampleFiles[i]))
+        #     sample_img = cv2.resize(sample_img, (IMGSIZE, IMGSIZE))
+        #     sample_img = np.array([sample_img])
+        #     sample_img = sample_img / 255
+        #     result = self.modelDualGo.predict([resized_img, sample_img])
+        #     print(sampleFiles[i], " ------- ", result)
+        #     resArray.append(
+        #         {"type": "dual_"+types[i], "probability": 100*result[0][0]})
+
+        print("General prediction-------------------------")
+        result = self.generalModel.predict(process_image(img_file))
+        for (i, p) in enumerate(result[0]):
             resArray.append(
-                {"type": "dual_"+types[i], "probability": 100*result[0][0]})
+                {"type": "general_"+types[i], "probability": p*100})
 
         print("individual prediction-------------------------")
         for i in range(4):
             result = self.individualModels[i].predict(resized_img)
             resArray.append(
                 {"type": "individual_"+types[i], "probability": 100*result[0][1]})
-
-        print("General prediction-------------------------")
-        result = self.generalModel.predict(process_image(img_file))
-
-        for (i, p) in enumerate(result[0]):
-            resArray.append(
-                {"type": "general_"+types[i], "probability": p*100})
 
         res = {"result": resArray}
         return res
