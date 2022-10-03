@@ -13,6 +13,7 @@ from tensorflow.keras.layers import concatenate
 from tensorflow.keras import optimizers
 from tensorflow.keras import regularizers
 from tensorflow.keras.regularizers import l2
+from keras.models import load_model
 # SingletonMeta
 
 
@@ -31,7 +32,7 @@ sampleFiles = ['/sample/arowana.jpg', '/sample/betta.jpg',
 dualModelPath = "./models/compare_128_50_16_1_2022-09-18_23-10-14.hdf5"
 filepath = "./models/base_128_200_64_1_2022-09-18_17-14-53.hdf5"
 generalModel = "./models/medium_224_20_64_1_2022-09-25_19-33-18.hdf5"
-preModel = "./models/202209251427cifar100.hdf5"
+preModel = "./models/Hybrid_Cifar100_202210020043.hdf5"
 
 binaryModels = [
     {
@@ -85,226 +86,226 @@ optmzs = ['adam', optimizers.RMSprop(learning_rate=0.0001), 'rmsprop']
 optmz = optmzs[OPT_IDX]
 
 
-def createPreModel():
-    model = Sequential()
-    #     73.58% - 150
-    model.add(Conv2D(128, (3, 3), kernel_regularizer=l2(0.0001),
-              input_shape=(32, 32, 3), padding='same', activation='relu'))
-    model.add(Conv2D(128, (3, 3), padding='same', activation='relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
-    model.add(Dropout(0.5))
+# def createPreModel():
+#     model = Sequential()
+#     #     73.58% - 150
+#     model.add(Conv2D(128, (3, 3), kernel_regularizer=l2(0.0001),
+#               input_shape=(32, 32, 3), padding='same', activation='relu'))
+#     model.add(Conv2D(128, (3, 3), padding='same', activation='relu'))
+#     model.add(MaxPooling2D(pool_size=(2, 2)))
+#     model.add(Dropout(0.5))
 
-    model.add(Conv2D(256, (3, 3), kernel_regularizer=l2(
-        0.0001), padding='same', activation='relu'))
-    model.add(Conv2D(256, (3, 3), padding='same', activation='relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
-    model.add(Dropout(0.5))
+#     model.add(Conv2D(256, (3, 3), kernel_regularizer=l2(
+#         0.0001), padding='same', activation='relu'))
+#     model.add(Conv2D(256, (3, 3), padding='same', activation='relu'))
+#     model.add(MaxPooling2D(pool_size=(2, 2)))
+#     model.add(Dropout(0.5))
 
-    model.add(Conv2D(512, (3, 3), kernel_regularizer=l2(
-        0.0001), padding='same', activation='relu'))
-    model.add(Conv2D(512, (3, 3), activation='relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
-    model.add(Dropout(0.5))
+#     model.add(Conv2D(512, (3, 3), kernel_regularizer=l2(
+#         0.0001), padding='same', activation='relu'))
+#     model.add(Conv2D(512, (3, 3), activation='relu'))
+#     model.add(MaxPooling2D(pool_size=(2, 2)))
+#     model.add(Dropout(0.5))
 
-    model.add(Conv2D(1024, (3, 3), kernel_regularizer=l2(
-        0.0001), padding='same', activation='relu'))
-    # model.add(Conv2D(1024, (3, 3), activation = 'relu'))
-    # model.add(Conv2D(1024, (5, 5), activation = 'relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
-    model.add(Dropout(0.5))
+#     model.add(Conv2D(1024, (3, 3), kernel_regularizer=l2(
+#         0.0001), padding='same', activation='relu'))
+#     # model.add(Conv2D(1024, (3, 3), activation = 'relu'))
+#     # model.add(Conv2D(1024, (5, 5), activation = 'relu'))
+#     model.add(MaxPooling2D(pool_size=(2, 2)))
+#     model.add(Dropout(0.5))
 
-    model.add(Flatten())
-    model.add(Dense(1024, activation='relu'))
-    model.add(Dropout(0.5))
-    model.add(Dense(100, activation='relu'))
-    model.add(Dropout(0.5))
-    model.add(Dense(20, activation='softmax'))
+#     model.add(Flatten())
+#     model.add(Dense(1024, activation='relu'))
+#     model.add(Dropout(0.5))
+#     model.add(Dense(100, activation='relu'))
+#     model.add(Dropout(0.5))
+#     model.add(Dense(20, activation='softmax'))
 
-    model.load_weights(preModel)
-    model.compile(loss='categorical_crossentropy',
-                  optimizer=optmz, metrics=['accuracy'])
+#     model.load_weights(preModel)
+#     model.compile(loss='categorical_crossentropy',
+#                   optimizer=optmz, metrics=['accuracy'])
 
-    return model
-
-
-def createGeneralModel():
-    model = Sequential()
-    model.add(Conv2D(32, (5, 5), padding='same', input_shape=(
-        IMG_HEIGHT, IMG_WIDTH, CHANNELS), kernel_initializer='he_normal', activation='relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
-    model.add(Conv2D(64, (5, 5), padding='same', kernel_initializer='he_normal',
-              kernel_regularizer=regularizers.l2(0.001), activation='relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
-    model.add(Conv2D(128, (5, 5), padding='same', kernel_initializer='he_normal',
-              kernel_regularizer=regularizers.l2(0.001), activation='relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
-    model.add(Conv2D(256, (4, 4), padding='same', kernel_initializer='he_normal',
-              kernel_regularizer=regularizers.l2(0.001), activation='relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
-    model.add(Conv2D(512, (4, 4), padding='same', kernel_initializer='he_normal',
-              kernel_regularizer=regularizers.l2(0.001), activation='relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
-    model.add(Conv2D(768, (3, 3), padding='same', kernel_initializer='he_normal',
-              kernel_regularizer=regularizers.l2(0.001), activation='relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
-    #model.add(Conv2D(1024, (2,2), padding='same', kernel_initializer='he_normal', kernel_regularizer=regularizers.l2(0.001), activation='relu'))
-    # model.add(MaxPooling2D(pool_size=(2,2)))
-    model.add(Dropout(0.2))
-    model.add(Flatten())
-    model.add(Dense(768, activation='relu'))
-    model.add(Dense(512, activation='relu'))
-    model.add(Dense(256, activation='relu'))
-    #model.add(Dense(128, activation='relu'))
-    model.add(Dense(64, activation='relu'))
-    model.add(Dense(32, activation='relu'))
-    model.add(Dense(16, activation='relu'))
-    model.add(Dense(N_LABELS, activation=ACTIVATION))
-    model.compile(loss='categorical_crossentropy',
-                  optimizer=optmz, metrics=['accuracy'])
-
-    model.load_weights(generalModel)
-    return model
+#     return model
 
 
-def createModel():
-    model = Sequential()
-    model.add(Conv2D(64, (5, 5), padding='same', input_shape=(
-        IMGSIZE, IMGSIZE, 3), activation='relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
-    model.add(Conv2D(32, (3, 3), padding='same', activation='relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
-    model.add(Conv2D(32, (3, 3), padding='same', activation='relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
-    model.add(Dropout(0.1))
-    model.add(Conv2D(32, (3, 3), padding='same', activation='relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
-    model.add(Dropout(0.15))
-    model.add(Conv2D(32, (3, 3), padding='same', activation='relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
-    model.add(Dropout(0.2))
-    model.add(Flatten())
-    model.add(Dense(64, activation='relu'))
-    model.add(Dense(10, activation='relu'))
-    model.add(Dense(4, activation='softmax'))
-    model.compile(loss='categorical_crossentropy',
-                  optimizer=optmz, metrics=['accuracy'])
-    return model
+# def createGeneralModel():
+#     model = Sequential()
+#     model.add(Conv2D(32, (5, 5), padding='same', input_shape=(
+#         IMG_HEIGHT, IMG_WIDTH, CHANNELS), kernel_initializer='he_normal', activation='relu'))
+#     model.add(MaxPooling2D(pool_size=(2, 2)))
+#     model.add(Conv2D(64, (5, 5), padding='same', kernel_initializer='he_normal',
+#               kernel_regularizer=regularizers.l2(0.001), activation='relu'))
+#     model.add(MaxPooling2D(pool_size=(2, 2)))
+#     model.add(Conv2D(128, (5, 5), padding='same', kernel_initializer='he_normal',
+#               kernel_regularizer=regularizers.l2(0.001), activation='relu'))
+#     model.add(MaxPooling2D(pool_size=(2, 2)))
+#     model.add(Conv2D(256, (4, 4), padding='same', kernel_initializer='he_normal',
+#               kernel_regularizer=regularizers.l2(0.001), activation='relu'))
+#     model.add(MaxPooling2D(pool_size=(2, 2)))
+#     model.add(Conv2D(512, (4, 4), padding='same', kernel_initializer='he_normal',
+#               kernel_regularizer=regularizers.l2(0.001), activation='relu'))
+#     model.add(MaxPooling2D(pool_size=(2, 2)))
+#     model.add(Conv2D(768, (3, 3), padding='same', kernel_initializer='he_normal',
+#               kernel_regularizer=regularizers.l2(0.001), activation='relu'))
+#     model.add(MaxPooling2D(pool_size=(2, 2)))
+#     #model.add(Conv2D(1024, (2,2), padding='same', kernel_initializer='he_normal', kernel_regularizer=regularizers.l2(0.001), activation='relu'))
+#     # model.add(MaxPooling2D(pool_size=(2,2)))
+#     model.add(Dropout(0.2))
+#     model.add(Flatten())
+#     model.add(Dense(768, activation='relu'))
+#     model.add(Dense(512, activation='relu'))
+#     model.add(Dense(256, activation='relu'))
+#     #model.add(Dense(128, activation='relu'))
+#     model.add(Dense(64, activation='relu'))
+#     model.add(Dense(32, activation='relu'))
+#     model.add(Dense(16, activation='relu'))
+#     model.add(Dense(N_LABELS, activation=ACTIVATION))
+#     model.compile(loss='categorical_crossentropy',
+#                   optimizer=optmz, metrics=['accuracy'])
+
+#     model.load_weights(generalModel)
+#     return model
 
 
-def createBettaModel(params):
-    model = Sequential()
-    model.add(Conv2D(32, (3, 3), padding='same', input_shape=(
-        IMGSIZE, IMGSIZE, 3), activation='relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
-    model.add(Conv2D(16, (3, 3), padding='same', activation='relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
-    model.add(Dropout(0.2))
-    model.add(Flatten())
-    model.add(Dense(10, activation='relu'))
-    model.add(Dense(2, activation=params["activation"]))
-
-    model.load_weights(params["filePath"])
-    model.compile(loss=params["loss"],
-                  optimizer=optmzs[params["optmz"]], metrics=['accuracy'])
-    return model
-
-
-def createArowanaModel(params):
-    model = Sequential()
-    model.add(Conv2D(32, (3, 3), padding='same', input_shape=(
-        IMGSIZE, IMGSIZE, 3), activation='relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
-    model.add(Conv2D(16, (3, 3), padding='same', activation='relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
-    model.add(Dropout(0.2))
-    model.add(Flatten())
-    model.add(Dense(10, activation='relu'))
-    model.add(Dense(2, activation=params["activation"]))
-
-    model.load_weights(params["filePath"])
-    model.compile(loss=params["loss"],
-                  optimizer=optmzs[params["optmz"]], metrics=['accuracy'])
-    return model
+# def createModel():
+#     model = Sequential()
+#     model.add(Conv2D(64, (5, 5), padding='same', input_shape=(
+#         IMGSIZE, IMGSIZE, 3), activation='relu'))
+#     model.add(MaxPooling2D(pool_size=(2, 2)))
+#     model.add(Conv2D(32, (3, 3), padding='same', activation='relu'))
+#     model.add(MaxPooling2D(pool_size=(2, 2)))
+#     model.add(Conv2D(32, (3, 3), padding='same', activation='relu'))
+#     model.add(MaxPooling2D(pool_size=(2, 2)))
+#     model.add(Dropout(0.1))
+#     model.add(Conv2D(32, (3, 3), padding='same', activation='relu'))
+#     model.add(MaxPooling2D(pool_size=(2, 2)))
+#     model.add(Dropout(0.15))
+#     model.add(Conv2D(32, (3, 3), padding='same', activation='relu'))
+#     model.add(MaxPooling2D(pool_size=(2, 2)))
+#     model.add(Dropout(0.2))
+#     model.add(Flatten())
+#     model.add(Dense(64, activation='relu'))
+#     model.add(Dense(10, activation='relu'))
+#     model.add(Dense(4, activation='softmax'))
+#     model.compile(loss='categorical_crossentropy',
+#                   optimizer=optmz, metrics=['accuracy'])
+#     return model
 
 
-def createGoldfishModel(params):
-    model = Sequential()
-    model.add(Conv2D(32, (3, 3), padding='same', input_shape=(
-        IMGSIZE, IMGSIZE, 3), activation='relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
-    model.add(Conv2D(16, (3, 3), padding='same', activation='relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
-    model.add(Dropout(0.2))
-    model.add(Flatten())
-    model.add(Dense(10, activation='relu'))
-    model.add(Dense(2, activation=params["activation"]))
+# def createBettaModel(params):
+#     model = Sequential()
+#     model.add(Conv2D(32, (3, 3), padding='same', input_shape=(
+#         IMGSIZE, IMGSIZE, 3), activation='relu'))
+#     model.add(MaxPooling2D(pool_size=(2, 2)))
+#     model.add(Conv2D(16, (3, 3), padding='same', activation='relu'))
+#     model.add(MaxPooling2D(pool_size=(2, 2)))
+#     model.add(Dropout(0.2))
+#     model.add(Flatten())
+#     model.add(Dense(10, activation='relu'))
+#     model.add(Dense(2, activation=params["activation"]))
 
-    model.load_weights(params["filePath"])
-    model.compile(loss=params["loss"],
-                  optimizer=optmzs[params["optmz"]], metrics=['accuracy'])
-    return model
-
-
-def createFlowerhornModel(params):
-    model = Sequential()
-    model.add(Conv2D(32, (3, 3), padding='same', input_shape=(
-        IMGSIZE, IMGSIZE, 3), activation='relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
-    model.add(Conv2D(16, (3, 3), padding='same', activation='relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
-    model.add(Dropout(0.2))
-    model.add(Flatten())
-    model.add(Dense(10, activation='relu'))
-    model.add(Dense(2, activation=params["activation"]))
-
-    model.load_weights(params["filePath"])
-    model.compile(loss=params["loss"],
-                  optimizer=optmzs[params["optmz"]], metrics=['accuracy'])
-    return model
+#     model.load_weights(params["filePath"])
+#     model.compile(loss=params["loss"],
+#                   optimizer=optmzs[params["optmz"]], metrics=['accuracy'])
+#     return model
 
 
-def createDualTwModel():
-    Lin = Input(shape=(IMGSIZE, IMGSIZE, 3))
-    Lx = Conv2D(64, (3, 3), padding='same', activation='relu')(Lin)
-    Rin = Input(shape=(IMGSIZE, IMGSIZE, 3))
-    Rx = Conv2D(64, (3, 3), padding='same', activation='relu')(Rin)
+# def createArowanaModel(params):
+#     model = Sequential()
+#     model.add(Conv2D(32, (3, 3), padding='same', input_shape=(
+#         IMGSIZE, IMGSIZE, 3), activation='relu'))
+#     model.add(MaxPooling2D(pool_size=(2, 2)))
+#     model.add(Conv2D(16, (3, 3), padding='same', activation='relu'))
+#     model.add(MaxPooling2D(pool_size=(2, 2)))
+#     model.add(Dropout(0.2))
+#     model.add(Flatten())
+#     model.add(Dense(10, activation='relu'))
+#     model.add(Dense(2, activation=params["activation"]))
 
-    shared = Conv2D(32, (3, 3), padding='same',
-                    activation='relu', name='SharedLyr')
-    Lx = shared(Lx)
-    Rx = shared(Rx)
+#     model.load_weights(params["filePath"])
+#     model.compile(loss=params["loss"],
+#                   optimizer=optmzs[params["optmz"]], metrics=['accuracy'])
+#     return model
 
-    Lx = MaxPooling2D(pool_size=(2, 2))(Lx)
-    Rx = MaxPooling2D(pool_size=(2, 2))(Rx)
 
-    shared2 = Conv2D(32, (3, 3), padding='same',
-                     activation='relu', name='SharedLyr2')
-    Lx = shared2(Lx)
-    Rx = shared2(Rx)
+# def createGoldfishModel(params):
+#     model = Sequential()
+#     model.add(Conv2D(32, (3, 3), padding='same', input_shape=(
+#         IMGSIZE, IMGSIZE, 3), activation='relu'))
+#     model.add(MaxPooling2D(pool_size=(2, 2)))
+#     model.add(Conv2D(16, (3, 3), padding='same', activation='relu'))
+#     model.add(MaxPooling2D(pool_size=(2, 2)))
+#     model.add(Dropout(0.2))
+#     model.add(Flatten())
+#     model.add(Dense(10, activation='relu'))
+#     model.add(Dense(2, activation=params["activation"]))
 
-    Lx = MaxPooling2D(pool_size=(2, 2))(Lx)
-    Rx = MaxPooling2D(pool_size=(2, 2))(Rx)
+#     model.load_weights(params["filePath"])
+#     model.compile(loss=params["loss"],
+#                   optimizer=optmzs[params["optmz"]], metrics=['accuracy'])
+#     return model
 
-    shared3 = Conv2D(16, (3, 3), padding='same',
-                     activation='relu', name='SharedLyr3')
-    Lx = shared3(Lx)
-    Rx = shared3(Rx)
 
-    Lx = MaxPooling2D(pool_size=(2, 2))(Lx)
-    Rx = MaxPooling2D(pool_size=(2, 2))(Rx)
+# def createFlowerhornModel(params):
+#     model = Sequential()
+#     model.add(Conv2D(32, (3, 3), padding='same', input_shape=(
+#         IMGSIZE, IMGSIZE, 3), activation='relu'))
+#     model.add(MaxPooling2D(pool_size=(2, 2)))
+#     model.add(Conv2D(16, (3, 3), padding='same', activation='relu'))
+#     model.add(MaxPooling2D(pool_size=(2, 2)))
+#     model.add(Dropout(0.2))
+#     model.add(Flatten())
+#     model.add(Dense(10, activation='relu'))
+#     model.add(Dense(2, activation=params["activation"]))
 
-    x = concatenate([Lx, Rx], axis=-1)
-    x = Flatten()(x)
-    x = Dense(64, activation='relu')(x)
-    x = Dense(10, activation='relu')(x)
-    x = Dense(1, activation='sigmoid')(x)
+#     model.load_weights(params["filePath"])
+#     model.compile(loss=params["loss"],
+#                   optimizer=optmzs[params["optmz"]], metrics=['accuracy'])
+#     return model
 
-    model = Model(inputs=[Lin, Rin], outputs=x)
-    model.compile(loss='binary_crossentropy',
-                  optimizer=optmz,
-                  metrics=['accuracy'])
 
-    return model
+# def createDualTwModel():
+#     Lin = Input(shape=(IMGSIZE, IMGSIZE, 3))
+#     Lx = Conv2D(64, (3, 3), padding='same', activation='relu')(Lin)
+#     Rin = Input(shape=(IMGSIZE, IMGSIZE, 3))
+#     Rx = Conv2D(64, (3, 3), padding='same', activation='relu')(Rin)
+
+#     shared = Conv2D(32, (3, 3), padding='same',
+#                     activation='relu', name='SharedLyr')
+#     Lx = shared(Lx)
+#     Rx = shared(Rx)
+
+#     Lx = MaxPooling2D(pool_size=(2, 2))(Lx)
+#     Rx = MaxPooling2D(pool_size=(2, 2))(Rx)
+
+#     shared2 = Conv2D(32, (3, 3), padding='same',
+#                      activation='relu', name='SharedLyr2')
+#     Lx = shared2(Lx)
+#     Rx = shared2(Rx)
+
+#     Lx = MaxPooling2D(pool_size=(2, 2))(Lx)
+#     Rx = MaxPooling2D(pool_size=(2, 2))(Rx)
+
+#     shared3 = Conv2D(16, (3, 3), padding='same',
+#                      activation='relu', name='SharedLyr3')
+#     Lx = shared3(Lx)
+#     Rx = shared3(Rx)
+
+#     Lx = MaxPooling2D(pool_size=(2, 2))(Lx)
+#     Rx = MaxPooling2D(pool_size=(2, 2))(Rx)
+
+#     x = concatenate([Lx, Rx], axis=-1)
+#     x = Flatten()(x)
+#     x = Dense(64, activation='relu')(x)
+#     x = Dense(10, activation='relu')(x)
+#     x = Dense(1, activation='sigmoid')(x)
+
+#     model = Model(inputs=[Lin, Rin], outputs=x)
+#     model.compile(loss='binary_crossentropy',
+#                   optimizer=optmz,
+#                   metrics=['accuracy'])
+
+#     return model
 
 
 def process_image(img_file, h=IMG_HEIGHT, w=IMG_WIDTH):
@@ -325,34 +326,23 @@ def process_image(img_file, h=IMG_HEIGHT, w=IMG_WIDTH):
 
 class Classifier(metaclass=SingletonMeta):
     def __init__(self):
-        self.generalModel = None
-        self.modelGo = createModel()
-        self.modelGo.load_weights(filepath)
-        self.modelGo.compile(loss='categorical_crossentropy',
-                             optimizer=optmz,
-                             metrics=['accuracy'])
-
-        self.generalModel = createGeneralModel()
-        self.preModel = createPreModel()
-        self.modelDualGo = createDualTwModel()
-        self.modelDualGo.load_weights(dualModelPath)
-        self.modelDualGo.compile(loss='binary_crossentropy',
-                                 optimizer=optmz,
-                                 metrics=['accuracy'])
-
-        self.individualModels = [createArowanaModel(binaryModels[0]), createBettaModel(
-            binaryModels[1]), createGoldfishModel(binaryModels[2]), createFlowerhornModel(binaryModels[3])]
+        self.modelGo = load_model(filepath)
+        self.generalModel = load_model(generalModel)
+        self.preModel = load_model(preModel)
+        self.modelDualGo = load_model(dualModelPath)
+        self.individualModels = [load_model(binaryModels[0]["filePath"]), load_model(
+            binaryModels[1]["filePath"]), load_model(binaryModels[2]["filePath"]), load_model(binaryModels[3]["filePath"])]
 
     def classify(self, image):
 
         img_file = UPLOAD_FOLDER+"/"+image
         print(img_file)
 
-        preRes = self.preModel.predict(process_image(img_file, 32, 32))
+        preRes = self.preModel.predict(process_image(img_file, 64, 64))
         print(preRes[0])
-        if (preRes[0][1] != max(preRes[0])):
+        if (preRes[0][0] != max(preRes[0])):
             resArray = [{"type": "I cannot tell if it is a fish.",
-                         "probability": 100*preRes[0][1]}]
+                         "probability": 100*preRes[0][0]}]
             res = {"result": resArray}
             return res
 
