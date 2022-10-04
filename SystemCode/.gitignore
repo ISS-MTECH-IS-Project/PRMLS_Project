@@ -1,3 +1,7 @@
 myenv/
-models/
-static/images/*.jpg
+models/*.csv
+models/*.png
+static/images/
+dataset/
+validate/
+samples/
