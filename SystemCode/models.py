@@ -32,7 +32,7 @@ sampleFiles = ['/sample/arowana.jpg', '/sample/betta.jpg',
 dualModelPath = "./models/compare_128_50_16_1_2022-09-18_23-10-14.hdf5"
 filepath = "./models/base_128_200_64_1_2022-09-18_17-14-53.hdf5"
 generalModel = "./models/medium_224_20_64_1_2022-09-25_19-33-18.hdf5"
-preModel = "./models/Hybrid_Cifar100_202210020043.hdf5"
+preModel = "./models/Hybrid_Cifar100_202210062242.hdf5"
 
 binaryModels = [
     {
