@@ -5,12 +5,20 @@ import os
 from flask_cors import CORS, cross_origin
 from models import *
 from datetime import datetime
+from PIL import Image
 app = Flask(__name__)
 cors = CORS(app)
 
 UPLOAD_FOLDER = "./static/images"
 
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
+__classifier = Classifier()
+
+
+def convert_image(file):
+    image = Image.open(file)
+    image_rgb = image.convert('RGB')
+    image_rgb.save(file)
 
 
 @app.route('/')
@@ -22,6 +30,7 @@ def hello_world():
 def uploadFile(file1):
     path = os.path.join(app.config["UPLOAD_FOLDER"], file1.filename)
     file1.save(path)
+    convert_image(path)
     return file1.filename
 
 
@@ -30,5 +39,5 @@ def uploadFile(file1):
 def classifyImage():
     image = request.files["image"]
     filename = uploadFile(image)
-    resp = Classifier().classify(filename)
+    resp = __classifier.classify(filename)
     return jsonify(resp)
