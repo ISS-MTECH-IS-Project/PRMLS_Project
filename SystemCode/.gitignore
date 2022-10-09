@@ -1,6 +1,6 @@
 myenv/
 models/*.csv
-models/*.png
+models/*2022*
 static/images/
 dataset/
 validate/
