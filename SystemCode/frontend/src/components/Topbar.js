@@ -5,9 +5,9 @@ import Grid from "@mui/material/Grid";
 const Topbar = () => {
   return (
     <Grid container direction="row" alignItems="center">
-      <SmartToyIcon />
+      <img height={25} src="/static/images/sample/favicon-32x32.png" />
       <Box m={2} pt={3}></Box>
-      OhMyFishBot is here to serve
+      Spot My Fish is here to serve
     </Grid>
   );
 };
