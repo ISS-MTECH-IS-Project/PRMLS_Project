@@ -26,7 +26,7 @@ class SingletonMeta(type):
         return cls._instances[cls]
 
 
-preModel = "./models/Hybrid_Cifar100_202210062242.hdf5"
+preModel = "./models/Hybrid_Cifar100_202210052133.hdf5"
 finalModel = "./models/arbitrator_softmax_50_32_1_2022-10-08_00-05-20.hdf5"
 members_param = [
     {

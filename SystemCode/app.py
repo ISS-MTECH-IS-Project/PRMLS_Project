@@ -1,6 +1,7 @@
 from urllib import response
 from flask import Flask, jsonify, request
 from flask import render_template
+from flask import send_from_directory
 import os
 from flask_cors import CORS, cross_origin
 from models import *
@@ -25,6 +26,11 @@ def convert_image(file):
 @cross_origin()
 def hello_world():
     return render_template('index.html')
+
+
+@app.route('/favicon.ico')
+def fav():
+    return send_from_directory(os.path.join(app.root_path, 'static'), 'favicon.ico')
 
 
 def uploadFile(file1):

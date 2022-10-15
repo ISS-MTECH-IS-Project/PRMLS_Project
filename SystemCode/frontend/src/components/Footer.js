@@ -3,8 +3,11 @@ import Button from "@mui/material/Button";
 import { useEffect, useState } from "react";
 import Tooltip from "@mui/material/Tooltip";
 import SendIcon from "@mui/icons-material/Send";
+import FormGroup from "@mui/material/FormGroup";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Switch from "@mui/material/Switch";
 
-const Footer = ({ onSend }) => {
+const Footer = ({ onSend, onToggle }) => {
   const [image, setImage] = useState();
   const [preview, setPreview] = useState();
   const onClickF = () => {
@@ -57,6 +60,12 @@ const Footer = ({ onSend }) => {
                 Send
               </Button>
             </Tooltip>
+            <FormGroup>
+              <FormControlLabel
+                control={<Switch defaultChecked={false} onClick={onToggle} />}
+                label="More details"
+              />
+            </FormGroup>
           </ButtonGroup>
         </Grid>
       </Grid>
