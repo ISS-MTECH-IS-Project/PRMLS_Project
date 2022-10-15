@@ -1,15 +1,14 @@
 import { useState, useRef } from "react";
 import Header from "./Header";
 import Footer from "./Footer";
-import Topbar from "./Topbar";
 import Messages from "./Messages";
 import { Box, Grid } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import Divider from "@mui/material/Divider";
-import moment from "moment";
 
 const ChatScreen = () => {
   const [messages, setMessages] = useState([]);
+  const [showDetails, setShowDetails] = useState(false);
 
   const uploadImg = async (file, preview) => {
     const reqBody = new FormData();
@@ -24,6 +23,10 @@ const ChatScreen = () => {
       { file: file, preview: preview, response: data },
     ]);
     scrollToBottom();
+  };
+
+  const onToggle = () => {
+    setShowDetails(!showDetails);
   };
 
   const messagesEndRef = useRef(null);
@@ -43,10 +46,10 @@ const ChatScreen = () => {
         <Paper elevation={3}>
           <Grid item p={2}>
             <Header />
-            <Topbar />
-            <Messages messages={messages} />
             <Divider sx={{ mt: 2 }} />
-            <Footer onSend={uploadImg} />
+            <Messages messages={messages} showDetails={showDetails} />
+            <Divider sx={{ mt: 2 }} />
+            <Footer onSend={uploadImg} onToggle={onToggle} />
             <div ref={messagesEndRef} />
           </Grid>
         </Paper>
