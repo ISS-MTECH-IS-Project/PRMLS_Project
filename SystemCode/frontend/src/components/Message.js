@@ -53,7 +53,7 @@ const Message = ({ message, showDetails }) => {
                     }}
                   >
                     <TableCell component="th" scope="row">
-                      {row.type}
+                      {row.model_name}
                     </TableCell>
                     <TableCell align="left">{row.type}</TableCell>
                     <TableCell align="right">
