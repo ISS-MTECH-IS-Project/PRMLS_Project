@@ -21,7 +21,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build && del /Q ..\\templates\\index.html && rmdir /Q /S ..\\static && copy .\\build\\index.html ..\\templates\\ && xcopy .\\build\\static ..\\static /E /I",
+    "build": "react-scripts build && del /Q ..\\templates\\index.html && copy .\\build\\index.html ..\\templates\\ && xcopy .\\build\\static ..\\static /E /I",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

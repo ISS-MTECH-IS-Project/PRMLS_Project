@@ -33,10 +33,10 @@ const Message = ({ message, showDetails }) => {
           </Grid>
         </Grid>
       </Grid>
-      <Grid item display="inline-flex">
+      <Grid item display="inline-flex" p={1}>
         {showDetails && (
           <TableContainer component={Paper}>
-            <Table aria-label="simple table">
+            <Table size="small" aria-label="simple table">
               <TableHead>
                 <TableRow>
                   <TableCell>Model Name</TableCell>
@@ -53,7 +53,7 @@ const Message = ({ message, showDetails }) => {
                     }}
                   >
                     <TableCell component="th" scope="row">
-                      {row.type}
+                      {row.model_name}
                     </TableCell>
                     <TableCell align="left">{row.type}</TableCell>
                     <TableCell align="right">

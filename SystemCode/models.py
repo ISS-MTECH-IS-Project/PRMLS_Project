@@ -26,41 +26,41 @@ class SingletonMeta(type):
         return cls._instances[cls]
 
 
-preModel = "./models/Hybrid_Cifar100_202210052133.hdf5"
-finalModel = "./models/arbitrator_softmax_50_32_1_2022-10-08_00-05-20.hdf5"
+preModel = "./models/Hybrid_best.hdf5"
+finalModel = "./models/arbitrator_best.hdf5"
 members_param = [
     {
-        "model_name": "general",
-        "file_path": "./models/medium_224_20_64_1_2022-09-25_19-33-18.hdf5",
-        "class_names": ['arowana', 'betta', 'goldfish', 'flowerhorn'],
+        "model_name": "Main Classification Model",
+        "file_path": "./models/medium_best.hdf5",
+        "class_names": ['Arowana', 'Betta', 'Goldfish', 'Flowerhorn'],
         "img_width": 224,
         "img_height":160
     },
     {
-        "model_name": "arawana",
-        "file_path": "./models/arowana_softmax_128_50_64_1_2022-09-25_22-34-38.hdf5",
-        "class_names": ['not arowana', 'arowana'],
+        "model_name": "Arawana/Not Arawana Model",
+        "file_path": "./models/arowana_best.hdf5",
+        "class_names": ['Arowana', 'Not Arowana'],
         "img_width": 128,
         "img_height":128
     },
     {
-        "model_name": "betta",
-        "file_path": "./models/betta_softmax_128_50_64_1_2022-09-26_17-51-39.hdf5",
-        "class_names": ['not betta', 'betta'],
+        "model_name": "Betta/Not Betta Model",
+        "file_path": "./models/betta_best.hdf5",
+        "class_names": ['Betta', 'Not Betta'],
         "img_width": 128,
         "img_height":128
     },
     {
-        "model_name": "goldfish",
-        "file_path": "./models/goldfish_softmax_128_50_64_1_2022-09-25_22-37-40.hdf5",
-        "class_names": ['not goldfish', 'goldfish'],
+        "model_name": "Goldfish/Not Goldfish Model",
+        "file_path": "./models/goldfish_best.hdf5",
+        "class_names": ['Goldfish', 'Not Goldfish'],
         "img_width": 128,
         "img_height":128
     },
     {
-        "model_name": "flowerhorn",
-        "file_path": "./models/luohan_softmax_128_50_64_1_2022-09-25_22-42-17.hdf5",
-        "class_names": ['not flowerhorn', 'flowerhorn'],
+        "model_name": "Flowerhorn/Not Flowerhorn Model",
+        "file_path": "./models/luohan_best.hdf5",
+        "class_names": ['Flowerhorn', 'Not Flowerhorn'],
         "img_width": 128,
         "img_height":128
     }
@@ -72,13 +72,15 @@ CHANNELS = 3  # Keep RGB color channels to match the input format of the model
 
 def preprocess_image(filename):
     images = []
-    image_string = tf.io.read_file(filename)
-    image_decoded = tf.image.decode_jpeg(image_string, channels=CHANNELS)
+    img = tf.keras.utils.load_img(
+        filename, target_size=None, keep_aspect_ratio=True
+    )
+    img_array = tf.keras.utils.img_to_array(img)
     for i, m in enumerate(members_param):
-        image_resized = tf.image.resize_with_pad(
-            image_decoded, m["img_height"], m["img_width"], antialias=False)
+        image_resized = tf.keras.preprocessing.image.smart_resize(
+            img_array, size=(m["img_height"], m["img_width"]))
         image_normalized = image_resized / 255.0
-        images.append(np.expand_dims(image_normalized.numpy(), 0))
+        images.append(np.expand_dims(image_normalized, 0))
     return images
 
 # load models from file
@@ -128,7 +130,7 @@ class Classifier(metaclass=SingletonMeta):
         preRes = self.preModel.predict(process_image(img_file, 64, 64))
         print(preRes[0])
         if (np.argmax(preRes[0]) == 1):
-            resArray = [{"type": "I cannot tell if it is a fish.",
+            resArray = [{"model_name": "Fish/Not Fish Model", "type": "Not Fish",
                          "probability": 100*np.max(preRes[0])}]
             res = {"result": resArray}
             return res
@@ -140,7 +142,8 @@ class Classifier(metaclass=SingletonMeta):
         print(predict[0])
         fish_type = members_param[0]["class_names"][np.argmax(predict[0])]
         score = 100*np.max(predict[0])
-        resArray.append({"type": fish_type, "probability": score})
+        resArray.append({"model_name": "Ensemble Model",
+                        "type": fish_type, "probability": score})
 
         for i, model in enumerate(self.models):
             model_name = members_param[i]["model_name"]
@@ -150,7 +153,8 @@ class Classifier(metaclass=SingletonMeta):
             predict = model.predict(img)
             fish_type = members_param[i]["class_names"][np.argmax(predict[0])]
             score = 100*np.max(predict[0])
-            resArray.append({"type": fish_type, "probability": score})
+            resArray.append({"model_name": model_name,
+                            "type": fish_type, "probability": score})
 
         res = {"result": resArray}
         return res
