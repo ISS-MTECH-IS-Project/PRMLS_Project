@@ -39,28 +39,28 @@ members_param = [
     {
         "model_name": "Arawana/Not Arawana Model",
         "file_path": "./models/arowana_best.hdf5",
-        "class_names": ['Not Arowana', 'Arowana'],
+        "class_names": ['Arowana', 'Not Arowana'],
         "img_width": 128,
         "img_height":128
     },
     {
         "model_name": "Betta/Not Betta Model",
         "file_path": "./models/betta_best.hdf5",
-        "class_names": ['Not Betta', 'Betta'],
+        "class_names": ['Betta', 'Not Betta'],
         "img_width": 128,
         "img_height":128
     },
     {
         "model_name": "Goldfish/Not Goldfish Model",
         "file_path": "./models/goldfish_best.hdf5",
-        "class_names": ['Not Goldfish', 'Goldfish'],
+        "class_names": ['Goldfish', 'Not Goldfish'],
         "img_width": 128,
         "img_height":128
     },
     {
         "model_name": "Flowerhorn/Not Flowerhorn Model",
         "file_path": "./models/luohan_best.hdf5",
-        "class_names": ['Not Flowerhorn', 'Flowerhorn'],
+        "class_names": ['Flowerhorn', 'Not Flowerhorn'],
         "img_width": 128,
         "img_height":128
     }
@@ -72,13 +72,15 @@ CHANNELS = 3  # Keep RGB color channels to match the input format of the model
 
 def preprocess_image(filename):
     images = []
-    image_string = tf.io.read_file(filename)
-    image_decoded = tf.image.decode_jpeg(image_string, channels=CHANNELS)
+    img = tf.keras.utils.load_img(
+        filename, target_size=None, keep_aspect_ratio=True
+    )
+    img_array = tf.keras.utils.img_to_array(img)
     for i, m in enumerate(members_param):
-        image_resized = tf.image.resize_with_pad(
-            image_decoded, m["img_height"], m["img_width"], antialias=False)
+        image_resized = tf.keras.preprocessing.image.smart_resize(
+            img_array, size=(m["img_height"], m["img_width"]))
         image_normalized = image_resized / 255.0
-        images.append(np.expand_dims(image_normalized.numpy(), 0))
+        images.append(np.expand_dims(image_normalized, 0))
     return images
 
 # load models from file
