@@ -27,7 +27,7 @@ class SingletonMeta(type):
 
 
 preModel = "./models/Hybrid_best.hdf5"
-finalModel = "./models/arbitrator_best.hdf5"
+finalModel = "./models/ensemble_best.hdf5"
 members_param = [
     {
         "model_name": "Main Classification Model",
@@ -37,40 +37,19 @@ members_param = [
         "img_height":160
     },
     {
+        "model_name": "Simple Classification Model",
+        "file_path": "./models/simple_best.hdf5",
+        "class_names": ['Arowana', 'Betta', 'Goldfish', 'Flowerhorn'],
+        "img_width": 160,
+        "img_height":160
+    },
+    {
         "model_name": "Grayscale Model",
         "file_path": "./models/grayscale_best.hdf5",
         "class_names": ['Arowana', 'Betta', 'Goldfish', 'Flowerhorn'],
         "img_width": 160,
         "img_height":120,
         "channels":1
-    },
-    {
-        "model_name": "Arawana/Not Arawana Model",
-        "file_path": "./models/arowana_best.hdf5",
-        "class_names": ['Arowana', 'Not Arowana'],
-        "img_width": 128,
-        "img_height":128
-    },
-    {
-        "model_name": "Betta/Not Betta Model",
-        "file_path": "./models/betta_best.hdf5",
-        "class_names": ['Betta', 'Not Betta'],
-        "img_width": 128,
-        "img_height":128
-    },
-    {
-        "model_name": "Goldfish/Not Goldfish Model",
-        "file_path": "./models/goldfish_best.hdf5",
-        "class_names": ['Goldfish', 'Not Goldfish'],
-        "img_width": 128,
-        "img_height":128
-    },
-    {
-        "model_name": "Flowerhorn/Not Flowerhorn Model",
-        "file_path": "./models/luohan_best.hdf5",
-        "class_names": ['Flowerhorn', 'Not Flowerhorn'],
-        "img_width": 128,
-        "img_height":128
     }
 ]
 UPLOAD_FOLDER = "./static/images"
