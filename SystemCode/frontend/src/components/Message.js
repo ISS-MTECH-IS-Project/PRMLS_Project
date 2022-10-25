@@ -1,11 +1,22 @@
 import { Box, Grid } from "@mui/material";
 import Paper from "@mui/material/Paper";
+import { styled } from "@mui/material/styles";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
+
+const StyledTableRow = styled(TableRow)(({ theme }) => ({
+  "&:nth-of-type(odd)": {
+    backgroundColor: theme.palette.action.hover,
+  },
+  // hide last border
+  "&:last-child td, &:last-child th": {
+    backgroundColor: theme.palette.success.light,
+  },
+}));
 const Message = ({ message, showDetails }) => {
   return (
     <Grid container direction="row" p={1}>
@@ -24,9 +35,18 @@ const Message = ({ message, showDetails }) => {
                 <img alt="User Input" width={400} src={message.preview} />
                 <p>
                   Classification Output:{" "}
-                  <b>{message.response.result[0].type}</b>
+                  <b>
+                    {
+                      message.response.result[
+                        message.response.result.length - 1
+                      ].type
+                    }
+                  </b>
                   {"("}
-                  {message.response.result[0].probability.toFixed(2)}%{")"}
+                  {message.response.result[
+                    message.response.result.length - 1
+                  ].probability.toFixed(2)}
+                  %{")"}
                 </p>
               </Box>
             </Paper>
@@ -39,14 +59,20 @@ const Message = ({ message, showDetails }) => {
             <Table size="small" aria-label="simple table">
               <TableHead>
                 <TableRow>
-                  <TableCell>Model Name</TableCell>
-                  <TableCell align="left">Classify Output</TableCell>
-                  <TableCell align="right">Probability</TableCell>
+                  <TableCell>
+                    <b>Model Name</b>
+                  </TableCell>
+                  <TableCell align="left">
+                    <b>Classify Output</b>
+                  </TableCell>
+                  <TableCell align="right">
+                    <b>Probability</b>
+                  </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {message.response.result.map((row, i) => (
-                  <TableRow
+                  <StyledTableRow
                     key={i}
                     sx={{
                       "&:last-child td, &:last-child th": { border: 0 },
@@ -59,7 +85,7 @@ const Message = ({ message, showDetails }) => {
                     <TableCell align="right">
                       {row.probability.toFixed(2)}%
                     </TableCell>
-                  </TableRow>
+                  </StyledTableRow>
                 ))}
               </TableBody>
             </Table>
