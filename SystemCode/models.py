@@ -27,7 +27,7 @@ class SingletonMeta(type):
 
 
 preModel = "./models/Hybrid_best.hdf5"
-finalModel = "./models/arbitrator_best.hdf5"
+finalModel = "./models/ensemble_best.hdf5"
 members_param = [
     {
         "model_name": "Main Classification Model",
@@ -37,32 +37,19 @@ members_param = [
         "img_height":160
     },
     {
-        "model_name": "Arawana/Not Arawana Model",
-        "file_path": "./models/arowana_best.hdf5",
-        "class_names": ['Arowana', 'Not Arowana'],
-        "img_width": 128,
-        "img_height":128
+        "model_name": "Simple Classification Model",
+        "file_path": "./models/simple_best.hdf5",
+        "class_names": ['Arowana', 'Betta', 'Goldfish', 'Flowerhorn'],
+        "img_width": 160,
+        "img_height":160
     },
     {
-        "model_name": "Betta/Not Betta Model",
-        "file_path": "./models/betta_best.hdf5",
-        "class_names": ['Betta', 'Not Betta'],
-        "img_width": 128,
-        "img_height":128
-    },
-    {
-        "model_name": "Goldfish/Not Goldfish Model",
-        "file_path": "./models/goldfish_best.hdf5",
-        "class_names": ['Goldfish', 'Not Goldfish'],
-        "img_width": 128,
-        "img_height":128
-    },
-    {
-        "model_name": "Flowerhorn/Not Flowerhorn Model",
-        "file_path": "./models/luohan_best.hdf5",
-        "class_names": ['Flowerhorn', 'Not Flowerhorn'],
-        "img_width": 128,
-        "img_height":128
+        "model_name": "Grayscale Model",
+        "file_path": "./models/grayscale_best.hdf5",
+        "class_names": ['Arowana', 'Betta', 'Goldfish', 'Flowerhorn'],
+        "img_width": 160,
+        "img_height":120,
+        "channels":1
     }
 ]
 UPLOAD_FOLDER = "./static/images"
@@ -72,11 +59,13 @@ CHANNELS = 3  # Keep RGB color channels to match the input format of the model
 
 def preprocess_image(filename):
     images = []
-    img = tf.keras.utils.load_img(
-        filename, target_size=None, keep_aspect_ratio=True
-    )
-    img_array = tf.keras.utils.img_to_array(img)
+
     for i, m in enumerate(members_param):
+        grayscale = m.get("channels", 3) == 1
+        img = tf.keras.utils.load_img(
+            filename, target_size=None, keep_aspect_ratio=True, grayscale=grayscale
+        )
+        img_array = tf.keras.utils.img_to_array(img)
         image_resized = tf.keras.preprocessing.image.smart_resize(
             img_array, size=(m["img_height"], m["img_width"]))
         image_normalized = image_resized / 255.0
@@ -126,24 +115,20 @@ class Classifier(metaclass=SingletonMeta):
         img_file = UPLOAD_FOLDER+"/"+image
         print(img_file)
 
+        resArray = []
         print("fish or not fish classification-----------------")
         preRes = self.preModel.predict(process_image(img_file, 64, 64))
         print(preRes[0])
         if (np.argmax(preRes[0]) == 1):
-            resArray = [{"model_name": "Fish/Not Fish Model", "type": "Not Fish",
-                         "probability": 100*np.max(preRes[0])}]
+            resArray.append({"model_name": "Fish/Not Fish Model", "type": "Not Fish",
+                             "probability": 100*np.max(preRes[0])})
             res = {"result": resArray}
             return res
+        else:
+            resArray.append({"model_name": "Fish/Not Fish Model", "type": "Fish",
+                             "probability": 100*np.max(preRes[0])})
 
-        resArray = []
         input_images = preprocess_image(img_file)
-        print("ensemble prediction ------------------------------")
-        predict = self.finalModel.predict(input_images)
-        print(predict[0])
-        fish_type = members_param[0]["class_names"][np.argmax(predict[0])]
-        score = 100*np.max(predict[0])
-        resArray.append({"model_name": "Ensemble Model",
-                        "type": fish_type, "probability": score})
 
         for i, model in enumerate(self.models):
             model_name = members_param[i]["model_name"]
@@ -155,6 +140,14 @@ class Classifier(metaclass=SingletonMeta):
             score = 100*np.max(predict[0])
             resArray.append({"model_name": model_name,
                             "type": fish_type, "probability": score})
+
+        print("ensemble prediction ------------------------------")
+        predict = self.finalModel.predict(input_images)
+        print(predict[0])
+        fish_type = members_param[0]["class_names"][np.argmax(predict[0])]
+        score = 100*np.max(predict[0])
+        resArray.append({"model_name": "Ensemble Model",
+                        "type": fish_type, "probability": score})
 
         res = {"result": resArray}
         return res
