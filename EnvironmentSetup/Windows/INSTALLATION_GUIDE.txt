@@ -1,0 +1,45 @@
+####################################################################################
+DOWNLOAD Datasets
+####################################################################################
+
+Download the zipped datasets from google drive at :
+
+https://drive.google.com/drive/folders/1vK8Jbysbbv1U-nqNIeMERotrniJMtM8X?usp=sharing
+
+Unzip the images to the respective targeted fishes folder
+eg. arowana zip file to be unzipped to
+<spotmyfish_directory_which_you_install_to>\PRMLS_Project\SystemCode\dataset\arowana
+
+Do this for all 4 targeted fish classes.
+
+####################################################################################
+Python & Anaconda
+####################################################################################
+
+1) This project mainly written in Python (backend) and uses Python libraries and a compiled React frontend.
+Python installation is essential. Python 3.8 & above is recommended.
+https://www.python.org/downloads/windows/
+
+2) As we have provided an environment.yml file for sharing our package configuration,
+Anaconda installation is also recommended.
+https://docs.anaconda.com/anaconda/install/windows/
+
+After the above 2 application are installed,
+run the following in command prompt in the path where the environment.yml file is residing
+
+conda env create --file environment.yml
+
+####################################################################################
+Download (or Git pull) SpotMyFish
+####################################################################################
+
+Download SpotMyFish from https://github.com/TeamEightIS04/PRMLS_Project
+or alternatively Git pull
+
+Open up a command prompt and run the following commands
+
+cd to <spotmyfish_directory_which_you_install_to>\PRMLSProject\SystemCode
+$env:FLASK_APP = "app.py"
+python -m flask run
+
+SpotMyFish will be available by default at http://localhost:5000
