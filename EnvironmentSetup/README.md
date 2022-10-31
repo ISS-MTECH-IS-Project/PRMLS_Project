@@ -1,4 +1,4 @@
-# Installation Guide on Linux
+# Installation Guide
 
 ## Install Anaconda (Optional)
 
@@ -33,7 +33,7 @@ cd ~/PRMLS_Project/SystemCode
 - Install the dependencies (make sure the py39 environment is activated)
 
 ```bash
-pip install sklearn opencv-python Pillow tensorflow pandas Flask flask_cors
+pip install tensorflow==2.9.0 Flask flask-cors Pillow
 ```
 
 - Start the application
