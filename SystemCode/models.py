@@ -1,17 +1,5 @@
 import numpy as np
 import tensorflow as tf
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.models import Model
-from tensorflow.keras.layers import Input
-from tensorflow.keras.layers import Dense
-from tensorflow.keras.layers import Dropout
-from tensorflow.keras.layers import Flatten
-from tensorflow.keras.layers import Conv2D
-from tensorflow.keras.layers import MaxPooling2D
-from tensorflow.keras.layers import concatenate
-from tensorflow.keras import optimizers
-from tensorflow.keras import regularizers
-from tensorflow.keras.regularizers import l2
 from keras.models import load_model
 # SingletonMeta
 
@@ -47,8 +35,8 @@ members_param = [
         "model_name": "Grayscale Model",
         "file_path": "./models/grayscale_best.hdf5",
         "class_names": ['Arowana', 'Betta', 'Goldfish', 'Flowerhorn'],
-        "img_width": 160,
-        "img_height":120,
+        "img_width": 80,
+        "img_height":60,
         "channels":1
     }
 ]
