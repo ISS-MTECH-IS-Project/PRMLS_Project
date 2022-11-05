@@ -108,12 +108,12 @@ class Classifier(metaclass=SingletonMeta):
         preRes = self.preModel.predict(process_image(img_file, 64, 64))
         print(preRes[0])
         if (np.argmax(preRes[0]) == 1):
-            resArray.append({"model_name": "Fish/Not Fish Model", "type": "Not Fish",
+            resArray.append({"model_name": "Target Class/Not Target Class Model", "type": "Not Target Class",
                              "probability": 100*np.max(preRes[0])})
             res = {"result": resArray}
             return res
         else:
-            resArray.append({"model_name": "Fish/Not Fish Model", "type": "Fish",
+            resArray.append({"model_name": "Target Class/Not Target Class Model", "type": "Target Class",
                              "probability": 100*np.max(preRes[0])})
 
         input_images = preprocess_image(img_file)
